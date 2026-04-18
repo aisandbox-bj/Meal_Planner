@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Family Meal Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#FDF8F3;--cream-d:#F4EDE2;--cream-dd:#E8DDD0;
+  --pur:#5B2D8E;--pur-m:#7040AA;--pur-l:#9B6BC4;--pur-p:#F2ECF9;--pur-b:#E0D0F0;
+  --sun:#D4880A;--sun-l:#FEF5DC;--sun-m:#F0B830;--sun-d:#A06800;
+  --red:#A83228;--red-l:#FCECEA;
+  --grn:#1E6B2A;--grn-l:#E6F5EA;
+  --blue:#1A4A8A;--blue-l:#E8F0FB;
+  --text:#1A1418;--text-m:#4A4050;--text-q:#9A8FA0;
+  --bdr:#DDD0E8;--shd:rgba(91,45,142,0.09);
+  --r:14px;--rs:10px;--rx:7px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;-webkit-text-size-adjust:100%;}
+body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--pur) 0%,var(--pur-m) 100%);color:#fff;padding:14px 18px 10px;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(91,45,142,0.28);}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.hdr h1{font-family:'Lora',serif;font-size:1.22rem;font-weight:700;}
+.hdr-sub{font-size:0.73rem;opacity:0.68;font-weight:300;margin-top:1px;}
+.key-pill{font-size:0.7rem;padding:4px 11px;border-radius:16px;background:rgba(255,255,255,0.15);cursor:pointer;display:flex;align-items:center;gap:5px;border:none;color:#fff;font-family:'DM Sans',sans-serif;transition:background 0.2s;white-space:nowrap;}
+.key-pill:hover{background:rgba(255,255,255,0.25);}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.3);transition:background 0.3s;}
+.dot.on{background:#7FD46A;}
+
+/* STEP NAV */
+.snav{background:var(--pur-m);padding:0 18px 11px;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;}
+.snav::-webkit-scrollbar{display:none;}
+.sp{flex-shrink:0;font-size:0.7rem;font-weight:500;padding:5px 11px;border-radius:16px;border:none;cursor:pointer;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.58);font-family:'DM Sans',sans-serif;white-space:nowrap;transition:all 0.2s;}
+.sp.active{background:#fff;color:var(--pur);font-weight:700;}
+.sp.done{background:rgba(155,107,196,0.4);color:rgba(255,255,255,0.88);}
+
+/* MAIN */
+.main{padding:18px 15px 110px;max-width:660px;margin:0 auto;}
+.screen{display:none;animation:fi 0.22s ease;}
+.screen.active{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* CARDS */
+.card{background:#fff;border-radius:var(--r);padding:18px;margin-bottom:14px;box-shadow:0 2px 10px var(--shd);border:1px solid var(--bdr);}
+.card-t{font-family:'Lora',serif;font-size:1.05rem;font-weight:600;color:var(--pur);margin-bottom:3px;}
+.card-s{font-size:0.78rem;color:var(--text-q);margin-bottom:14px;}
+
+/* SUNSHINE BANNER */
+.sun-banner{background:linear-gradient(135deg,var(--sun-l),#FFF9EE);border:1.5px solid var(--sun-m);border-radius:var(--r);padding:15px 18px;margin-bottom:14px;display:flex;align-items:flex-start;gap:12px;}
+.sun-ico{font-size:1.7rem;flex-shrink:0;line-height:1;}
+.sun-txt{font-family:'Lora',serif;font-size:0.88rem;color:var(--sun-d);line-height:1.55;font-style:italic;}
+
+/* LANDING */
+.hero{text-align:center;padding:22px 8px 16px;}
+.hero h2{font-family:'Lora',serif;font-size:1.5rem;color:var(--pur);margin-bottom:6px;}
+.hero p{font-size:0.85rem;color:var(--text-m);line-height:1.6;max-width:350px;margin:0 auto 20px;}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;max-width:400px;margin-left:auto;margin-right:auto;}
+.mode-card{background:#fff;border:2px solid var(--bdr);border-radius:var(--r);padding:20px 12px;cursor:pointer;text-align:center;transition:all 0.2s;-webkit-tap-highlight-color:transparent;box-shadow:0 2px 8px var(--shd);}
+.mode-card:hover,.mode-card:active{border-color:var(--pur-l);background:var(--pur-p);}
+.mode-ico{font-size:2rem;margin-bottom:8px;}
+.mode-name{font-family:'Lora',serif;font-size:0.93rem;font-weight:600;color:var(--pur);margin-bottom:4px;}
+.mode-desc{font-size:0.72rem;color:var(--text-q);line-height:1.4;}
+
+/* FORMS */
+label{display:block;font-size:0.8rem;font-weight:600;color:var(--text-m);margin-bottom:5px;margin-top:14px;}
+label:first-of-type{margin-top:0;}
+input[type=text],input[type=password],textarea{width:100%;padding:11px 13px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:0.88rem;background:var(--cream);color:var(--text);transition:border-color 0.2s;-webkit-appearance:none;appearance:none;}
+input:focus,textarea:focus{outline:none;border-color:var(--pur-l);background:#fff;}
+textarea{resize:vertical;min-height:78px;line-height:1.5;}
+.helper{font-size:0.74rem;color:var(--text-q);margin-top:4px;line-height:1.4;}
+
+/* TOGGLE GROUPS */
+.dtg{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.db{padding:7px 12px;border-radius:18px;border:1.5px solid var(--bdr);background:var(--cream);font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:500;cursor:pointer;transition:all 0.18s;color:var(--text-m);-webkit-tap-highlight-color:transparent;}
+.db.sel{background:var(--pur-p);border-color:var(--pur-l);color:var(--pur);font-weight:600;}
+.db.absent{background:var(--red-l);border-color:var(--red);color:var(--red);font-weight:600;}
+.db.low{background:var(--sun-l);border-color:var(--sun-m);color:var(--sun-d);font-weight:600;}
+
+/* VOICE */
+.voice-box{border:1.5px dashed var(--bdr);border-radius:var(--rs);padding:14px;background:var(--cream);}
+.rec-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
+.rec-btn{display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:var(--rs);border:none;font-family:'DM Sans',sans-serif;font-size:0.83rem;font-weight:600;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
+.rec-btn.idle{background:var(--pur);color:#fff;}
+.rec-btn.rec{background:var(--red);color:#fff;animation:pulse 1.1s infinite;}
+.rec-btn.proc{background:var(--sun);color:#fff;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.65}}
+.rec-dot{width:9px;height:9px;border-radius:50%;background:currentColor;}
+.rec-st{font-size:0.74rem;color:var(--text-q);}
+.trans-out{font-size:0.8rem;color:var(--text-m);line-height:1.5;background:#fff;border-radius:var(--rx);padding:9px 11px;border:1px solid var(--bdr);margin-top:10px;white-space:pre-wrap;min-height:54px;}
+.trans-out.empty{color:var(--text-q);font-style:italic;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:13px 20px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;border:none;transition:all 0.18s;-webkit-tap-highlight-color:transparent;}
+.btn-p{background:var(--pur);color:#fff;width:100%;padding:15px;font-size:0.95rem;box-shadow:0 4px 14px rgba(91,45,142,0.22);}
+.btn-p:hover{background:var(--pur-m);}
+.btn-p:disabled{background:#bbb;box-shadow:none;cursor:not-allowed;}
+.btn-sec{background:var(--cream-d);color:var(--text-m);border:1.5px solid var(--bdr);}
+.btn-sec:hover{background:var(--cream-dd);}
+.btn-sun{background:var(--sun);color:#fff;box-shadow:0 3px 10px rgba(212,136,10,0.28);}
+.btn-sun:hover{background:var(--sun-d);color:#fff;}
+.btn-sm{padding:7px 13px;font-size:0.77rem;border-radius:16px;}
+
+/* LOADING */
+.load-ov{display:none;position:fixed;inset:0;background:rgba(253,248,243,0.94);z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:18px;}
+.load-ov.on{display:flex;}
+.spin{width:44px;height:44px;border:4px solid var(--cream-dd);border-top-color:var(--pur);border-radius:50%;animation:spin 0.85s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-t{font-family:'Lora',serif;font-size:1rem;color:var(--pur);}
+.load-s{font-size:0.78rem;color:var(--text-q);text-align:center;max-width:260px;line-height:1.5;}
+
+/* MEAL REVIEW CARDS */
+.mc{background:#fff;border-radius:var(--r);margin-bottom:12px;box-shadow:0 2px 10px var(--shd);border:1.5px solid var(--bdr);overflow:hidden;transition:border-color 0.2s,opacity 0.2s;}
+.mc.approved{border-color:#52B86A;box-shadow:0 2px 12px rgba(82,184,106,0.15);}
+.mc.rejected{border-color:var(--red);opacity:0.85;}
+.mc.replacing{border-color:var(--sun-m);background:#FFFDF5;}
+.mc-hdr{padding:14px 16px 10px;}
+.mc-day{font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--pur-l);margin-bottom:2px;}
+.mc-name{font-family:'Lora',serif;font-size:1rem;font-weight:600;line-height:1.2;}
+.badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;}
+.badge{font-size:0.67rem;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap;}
+.b-pur{background:var(--pur-p);color:var(--pur);}
+.b-sun{background:var(--sun-l);color:var(--sun-d);}
+.b-red{background:var(--red-l);color:var(--red);}
+.b-grn{background:var(--grn-l);color:var(--grn);}
+.b-star{background:var(--pur);color:#fff;}
+.b-lite{background:var(--cream-d);color:var(--text-m);}
+.mc-body{padding:0 16px 14px;border-top:1px solid var(--cream-d);}
+.mc-desc{font-size:0.83rem;color:var(--text-m);line-height:1.5;margin:9px 0 7px;}
+.mc-meta{display:flex;flex-wrap:wrap;gap:10px;font-size:0.75rem;color:var(--text-q);margin-bottom:5px;}
+.mc-ingr{font-size:0.75rem;color:var(--text-q);margin-bottom:10px;line-height:1.5;}
+
+/* ── ACTION BUTTONS — specificity fixed with :is() + !important ── */
+.mc-acts{display:flex;gap:7px;margin-bottom:10px;}
+.ab{flex:1;padding:9px 4px;border-radius:9px;font-size:0.8rem;font-weight:600;cursor:pointer;border:1.5px solid var(--bdr);background:var(--cream);color:var(--text-m);transition:background 0.15s,border-color 0.15s,color 0.15s;font-family:'DM Sans',sans-serif;-webkit-tap-highlight-color:transparent;outline:none;}
+.ab.approve.active{background:#E4F7EA !important;border-color:#52B86A !important;color:#1A6B30 !important;}
+/* maybe removed */
+.ab.reject.active{background:var(--red-l) !important;border-color:var(--red) !important;color:var(--red) !important;}
+
+/* WHY ROW */
+.why-row{display:none;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.why-row.show{display:flex;}
+.why-btn{font-size:0.72rem;padding:5px 10px;border-radius:14px;border:1.5px solid var(--bdr);background:var(--cream);color:var(--text-m);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;-webkit-tap-highlight-color:transparent;}
+.why-btn.sel{background:var(--red-l);border-color:var(--red);color:var(--red);}
+.mc input[type=text],.mc textarea{font-size:0.8rem;padding:9px 11px;margin-bottom:7px;}
+.mc textarea{min-height:52px;}
+.chk-row{display:flex;align-items:center;gap:7px;font-size:0.8rem;color:var(--text-m);padding:5px 0 2px;cursor:pointer;}
+.chk-row input{width:auto;margin:0;accent-color:var(--pur);}
+
+/* BUDGET BANNER */
+.budget-bar{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:var(--rs);border:1px solid var(--sun-m);margin-bottom:14px;}
+.budget-bar.ok{background:var(--grn-l);border-color:#6ABD7A;color:var(--grn);}
+.budget-bar.warn{background:var(--sun-l);border-color:var(--sun-m);color:var(--sun-d);}
+.budget-bar.over{background:var(--red-l);border-color:var(--red);color:var(--red);}
+.budget-ico{font-size:1.2rem;flex-shrink:0;}
+.budget-txt{font-size:0.8rem;line-height:1.45;}
+
+/* WEEK SUMMARY */
+.ws-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--cream-d);}
+.ws-row:last-child{border-bottom:none;}
+.ws-day{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--pur);min-width:32px;flex-shrink:0;}
+.ws-info{flex:1;min-width:0;}
+.ws-name{font-family:'Lora',serif;font-size:0.93rem;font-weight:600;line-height:1.2;}
+.ws-meta{font-size:0.72rem;color:var(--text-q);margin-top:2px;}
+.ws-badges{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap;}
+.ws-change{font-size:0.72rem;font-weight:600;padding:5px 11px;border-radius:14px;border:1.5px solid var(--bdr);background:var(--cream);color:var(--text-m);cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0;transition:all 0.15s;-webkit-tap-highlight-color:transparent;}
+.ws-change:hover{background:var(--pur-p);border-color:var(--pur-l);color:var(--pur);}
+
+/* SHOPPING */
+.sh-cat{margin-bottom:16px;}
+.sh-cat h3{font-size:0.71rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--pur);margin-bottom:8px;padding-bottom:5px;border-bottom:1.5px solid var(--pur-p);}
+.sh-item{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--cream-d);font-size:0.87rem;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.sh-item input[type=checkbox]{width:18px;height:18px;flex-shrink:0;accent-color:var(--pur);cursor:pointer;}
+.sh-item.checked span{text-decoration:line-through;color:var(--text-q);}
+
+/* FINAL LIST */
+.final-box{background:var(--cream-d);border-radius:var(--rs);padding:14px 16px;font-size:0.88rem;line-height:2;color:var(--text);white-space:pre-wrap;border:1px solid var(--bdr);margin-bottom:12px;font-family:'DM Sans',sans-serif;}
+.share-row{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* QUICK RECIPE */
+.recipe-card{background:#fff;border-radius:var(--r);padding:16px;margin-bottom:10px;border:1.5px solid var(--bdr);box-shadow:0 2px 8px var(--shd);}
+.recipe-name{font-family:'Lora',serif;font-size:1rem;font-weight:600;color:var(--pur);margin-bottom:5px;}
+.recipe-desc{font-size:0.83rem;color:var(--text-m);line-height:1.5;margin-bottom:6px;}
+.recipe-meta{font-size:0.74rem;color:var(--text-q);}
+
+/* TABS */
+.tabs{display:flex;background:var(--cream-d);border-radius:var(--rs);padding:3px;margin-bottom:16px;gap:3px;}
+.tab{flex:1;padding:9px 6px;border-radius:8px;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:500;cursor:pointer;color:var(--text-q);transition:all 0.18s;-webkit-tap-highlight-color:transparent;}
+.tab.active{background:#fff;color:var(--pur);font-weight:600;box-shadow:0 1px 4px var(--shd);}
+
+/* ALERTS */
+.alert{padding:11px 13px;border-radius:var(--rs);font-size:0.81rem;margin-bottom:12px;line-height:1.5;}
+.a-pur{background:var(--pur-p);color:var(--pur);border:1px solid var(--pur-b);}
+.a-sun{background:var(--sun-l);color:var(--sun-d);border:1px solid #F0D080;}
+.a-grn{background:var(--grn-l);color:var(--grn);border:1px solid #8CD49A;}
+
+.div{height:1px;background:var(--bdr);margin:16px 0;}
+.sum-box{background:var(--pur-p);border:1px solid var(--pur-b);border-radius:var(--rs);padding:12px 14px;margin-bottom:14px;font-size:0.83rem;color:var(--pur);line-height:1.6;}
+
+/* BOTTOM BAR */
+.bbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--bdr);padding:10px 15px;z-index:100;box-shadow:0 -3px 14px rgba(0,0,0,0.07);}
+.bbar-i{max-width:660px;margin:0 auto;display:flex;gap:8px;}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.42);z-index:300;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.on{display:flex;}
+.modal{background:#fff;border-radius:var(--r);padding:22px;max-width:400px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.18);}
+.modal h3{font-family:'Lora',serif;font-size:1.05rem;color:var(--pur);margin-bottom:8px;}
+.modal p{font-size:0.83rem;color:var(--text-m);line-height:1.5;margin-bottom:16px;}
+.modal-btns{display:flex;gap:8px;}
+.modal-btns .btn{flex:1;padding:12px;}
+
+@media(min-width:680px){
+  .main{padding:24px 24px 110px;}
+  .hdr,.snav{padding-left:24px;padding-right:24px;}
+}
+@media print{
+  .hdr,.snav,.bbar,.tabs,.no-print{display:none!important;}
+  .main{padding:0;}
+  .screen{display:block!important;}
+  body{background:#fff;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div class="load-ov" id="loadOv">
+  <div class="spin"></div>
+  <div class="load-t" id="loadT">Working...</div>
+  <div class="load-s" id="loadS"></div>
+</div>
+
+<!-- NEW SESSION MODAL -->
+<div class="modal-bg" id="newSessModal">
+  <div class="modal">
+    <h3>Start a new session?</h3>
+    <p>This clears the current draft plan. Your taste memory and API keys are kept.</p>
+    <div class="modal-btns">
+      <button class="btn btn-sec" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-p" onclick="confirmNewSess()">Yes, start fresh</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-row">
+    <div>
+      <h1>🍽 Family Meal Planner</h1>
+      <div class="hdr-sub" id="hdrSub">Mon–Thu · Sat–Sun · Friday = takeout 🎉</div>
+    </div>
+    <button class="key-pill" onclick="goScreen('s0')">
+      <div class="dot" id="dotK"></div>
+      <span id="lblK">Setup</span>
+    </button>
+  </div>
+</div>
+
+<!-- STEP NAV -->
+<div class="snav" id="sNav" style="display:none;">
+  <button class="sp" onclick="navTo('s1')" id="p1">① Week</button>
+  <button class="sp" onclick="navTo('s2')" id="p2">② Review</button>
+  <button class="sp" onclick="navTo('sSumm')" id="p3">③ Confirm</button>
+  <button class="sp" onclick="navTo('sShop')" id="p4">④ Shopping</button>
+  <button class="sp" onclick="navTo('sFinal')" id="p5">⑤ Done</button>
+</div>
+
+<div class="main">
+
+<!-- ══════════════════════════════════════
+     S0 — SETUP
+══════════════════════════════════════ -->
+<div class="screen active" id="s0">
+  <div class="sun-banner">
+    <div class="sun-ico">☀️</div>
+    <div class="sun-txt">Welcome! 25 years of incredible meals deserve a little help with the thinking. Let's set things up.</div>
+  </div>
+  <div class="card">
+    <div class="card-t">API Keys</div>
+    <div class="card-s">Stored only on this device — never transmitted anywhere except directly to the AI services</div>
+    <label>Anthropic API Key — for meal planning</label>
+    <input type="password" id="keyA" placeholder="sk-ant-... (leave blank to keep existing key)" autocomplete="off"/>
+    <div class="helper">console.anthropic.com → API Keys</div>
+    <label style="margin-top:16px;">OpenAI API Key — for voice transcription (Whisper)</label>
+    <input type="password" id="keyO" placeholder="sk-... (leave blank to keep existing key)" autocomplete="off"/>
+    <div class="helper">platform.openai.com → API Keys · Only used for transcribing voice recordings</div>
+  </div>
+  <div class="bbar no-print" id="bbar-s0" style="display:none;">
+    <div class="bbar-i">
+      <button class="btn btn-p" onclick="saveKeys()">Save & Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     LANDING
+══════════════════════════════════════ -->
+<div class="screen" id="sLand">
+  <div class="sun-banner">
+    <div class="sun-ico">✨</div>
+    <div class="sun-txt">Good to have you back. What are we cooking up today?</div>
+  </div>
+  <div class="hero">
+    <h2>What would you like?</h2>
+    <p>Plan the full week ahead, or find a quick meal idea for tonight.</p>
+  </div>
+  <div class="mode-grid">
+    <div class="mode-card" onclick="startWeekly()">
+      <div class="mode-ico">📅</div>
+      <div class="mode-name">Weekly Plan</div>
+      <div class="mode-desc">Full Mon–Sun dinners with shopping list</div>
+    </div>
+    <div class="mode-card" onclick="goScreen('sQuick')">
+      <div class="mode-ico">⚡</div>
+      <div class="mode-name">Quick Recipe</div>
+      <div class="mode-desc">2–3 ideas for tonight's dinner</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:8px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+    <button class="btn btn-sec btn-sm no-print" onclick="viewHistory()">📖 Meal History</button>
+    <button class="btn btn-sec btn-sm no-print" onclick="goScreen('s0')">⚙ Settings</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S1 — WEEKLY INTAKE
+══════════════════════════════════════ -->
+<div class="screen" id="s1">
+  <!-- Session confirm -->
+  <div class="card">
+    <div class="card-t">Before We Plan</div>
+    <div class="card-s">Quick session setup</div>
+
+    <label>Planning Mon–Sun this week?</label>
+    <div class="dtg">
+      <button class="db sel" id="wnY" onclick="setStd(true)">Yes — Mon to Sun</button>
+      <button class="db" id="wnN" onclick="setStd(false)">Different range</button>
+    </div>
+    <div id="custRangeBox" style="display:none;margin-top:8px;">
+      <input type="text" id="custRange" placeholder="e.g. Wed–Tue or Thu–Wed"/>
+    </div>
+
+    <label style="margin-top:14px;">Friday this week?</label>
+    <div class="dtg">
+      <button class="db sel" id="friBtnTo" onclick="setFri('takeout')">Takeout as usual</button>
+      <button class="db" id="friBtnPl" onclick="setFri('plan')">Plan a meal for Friday</button>
+    </div>
+
+    <label style="margin-top:14px;">Daughter visiting?</label>
+    <div class="dtg">
+      <button class="db sel" id="dNo" onclick="setDau(false)">No — 5 people</button>
+      <button class="db" id="dYes" onclick="setDau(true)">Yes — plan for 6</button>
+    </div>
+
+    <label style="margin-top:14px;">Any family favourites on the menu this week?</label>
+    <textarea id="qFavs" placeholder="e.g. 'Can we do Mom's lasagne?' or 'Will wants to make his pie this week'"></textarea>
+  </div>
+
+  <!-- 5 Questions -->
+  <div class="card">
+    <div class="card-t">This Week's 5 Questions</div>
+    <div class="card-s">Fill in below, or use the voice recorder at the bottom</div>
+
+    <label>Q1 — Dad's availability · Tap days he's <strong style="color:var(--red);">away</strong></label>
+    <div class="dtg" id="dadGrp">
+      <button class="db" data-d="Mon" onclick="tDay(this,'absent')">Mon</button>
+      <button class="db" data-d="Tue" onclick="tDay(this,'absent')">Tue</button>
+      <button class="db" data-d="Wed" onclick="tDay(this,'absent')">Wed</button>
+      <button class="db" data-d="Thu" onclick="tDay(this,'absent')">Thu</button>
+      <button class="db" data-d="Fri" id="dadFri" style="display:none;" onclick="tDay(this,'absent')">Fri</button>
+      <button class="db" data-d="Sat" onclick="tDay(this,'absent')">Sat</button>
+      <button class="db" data-d="Sun" onclick="tDay(this,'absent')">Sun</button>
+    </div>
+
+    <label style="margin-top:14px;">Q2 — Low time days · Tap for <strong style="color:var(--sun-d);">quick meals</strong> (30–40 min)</label>
+    <div class="dtg" id="ltGrp">
+      <button class="db" data-d="Mon" onclick="tDay(this,'low')">Mon</button>
+      <button class="db" data-d="Tue" onclick="tDay(this,'low')">Tue</button>
+      <button class="db" data-d="Wed" onclick="tDay(this,'low')">Wed</button>
+      <button class="db" data-d="Thu" onclick="tDay(this,'low')">Thu</button>
+      <button class="db" data-d="Fri" id="ltFri" style="display:none;" onclick="tDay(this,'low')">Fri</button>
+      <button class="db" data-d="Sat" onclick="tDay(this,'low')">Sat</button>
+      <button class="db" data-d="Sun" onclick="tDay(this,'low')">Sun</button>
+    </div>
+
+    <label style="margin-top:14px;">Q3 — What's the family feeling this week?</label>
+    <textarea id="q3" placeholder="Cravings, themes, mood... e.g. 'something hearty' or 'we want lighter meals'"></textarea>
+
+    <label>Q4 — Any hard NOs or special events?</label>
+    <textarea id="q4" placeholder="Extra restrictions, guests, birthdays, special occasions this week?"></textarea>
+
+    <label>Q5 — What's in the fridge that needs using?</label>
+    <textarea id="q5" placeholder="e.g. chicken thighs, half a bag of spinach, mushrooms, leftover mince..."></textarea>
+  </div>
+
+  <!-- Voice -->
+  <div class="card">
+    <div class="card-t">🎙 Voice Input</div>
+    <div class="card-s">Record the family chat — Whisper transcribes it automatically</div>
+    <div class="voice-box">
+      <div class="rec-row">
+        <button class="rec-btn idle" id="recBtn" onclick="toggleRec()">
+          <div class="rec-dot"></div><span id="recLbl">Record</span>
+        </button>
+        <div class="rec-st" id="recSt">Tap to start</div>
+      </div>
+      <div class="helper" style="margin-top:10px;margin-bottom:4px;">Transcript (appears here after recording):</div>
+      <div class="trans-out empty" id="transOut">Nothing recorded yet — tap Record above or paste manually below.</div>
+    </div>
+    <div class="helper" style="margin-top:9px;">Or paste a transcript manually:</div>
+    <textarea id="manTrans" placeholder="Paste voice note transcript here..." style="margin-top:6px;min-height:60px;"></textarea>
+  </div>
+
+  <div class="bbar no-print" id="bbar-s1" style="display:none;">
+    <div class="bbar-i">
+      <button class="btn btn-p" onclick="generateDraft()">Generate Draft Plan →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S2 — DRAFT REVIEW
+══════════════════════════════════════ -->
+<div class="screen" id="s2">
+  <div class="tabs no-print">
+    <button class="tab active" onclick="showTab('meals')" id="tMeals">Meals</button>
+    <button class="tab" onclick="showTab('shopd')" id="tShopD">Draft Shopping</button>
+  </div>
+  <div id="tMealsC">
+    <div id="budgetBar" style="display:none;"></div>
+    <div id="mealCards"></div>
+    <div class="bbar no-print" id="bbar-s2" style="display:none;">
+      <div class="bbar-i">
+        <button class="btn btn-sec" style="flex:0 0 auto;padding:15px 14px;" title="Regenerate" onclick="generateDraft(true)">↺</button>
+        <button class="btn btn-p" style="flex:1;" onclick="goToSumm()">Week Summary →</button>
+      </div>
+    </div>
+  </div>
+  <div id="tShopDC" style="display:none;">
+    <div class="alert a-sun">Draft list based on all meals. Refine after confirming the plan.</div>
+    <div class="card">
+      <div class="card-t">Draft Shopping</div>
+      <div id="shopDraft"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S-SUMM — WEEK SUMMARY / CONFIRM
+══════════════════════════════════════ -->
+<div class="screen" id="sSumm">
+  <div class="sun-banner">
+    <div class="sun-ico">📋</div>
+    <div class="sun-txt" id="summQuote">Here's your week at a glance. Confirm meals or tap Change to adjust.</div>
+  </div>
+  <div class="card">
+    <div class="card-t">Your Week — Confirm or Change</div>
+    <div class="card-s">All confirmed meals go to the shopping list</div>
+    <div id="summRows"></div>
+  </div>
+  <div class="bbar no-print" id="bbar-sSumm" style="display:none;">
+    <div class="bbar-i">
+      <button class="btn btn-sec" style="flex:0 0 auto;padding:15px 14px;" onclick="navTo('s2')">← Back</button>
+      <button class="btn btn-p" style="flex:1;" onclick="goToShop()">Confirm — Build Shopping List →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S-SHOP — SHOPPING SELECTION
+══════════════════════════════════════ -->
+<div class="screen" id="sShop">
+  <div class="alert a-pur">Staples (salt, pepper, oil, butter, flour, sugar etc.) are excluded. Only fresh ingredients shown — tick what you need to buy.</div>
+  <div class="card">
+    <div class="card-t">Shopping List</div>
+    <div class="card-s">Select items for your cart</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;" class="no-print">
+      <button class="btn btn-sec btn-sm" onclick="selectAll(true)">✓ Select All</button>
+      <button class="btn btn-sec btn-sm" onclick="selectAll(false)">✕ Clear All</button>
+    </div>
+    <div id="shopSel"></div>
+  </div>
+  <div class="bbar no-print" id="bbar-sShop" style="display:none;">
+    <div class="bbar-i">
+      <button class="btn btn-sec" style="flex:0 0 auto;padding:15px 14px;" onclick="navTo('sSumm')">← Back</button>
+      <button class="btn btn-p" style="flex:1;" onclick="buildFinal()">Build Final List →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S-FINAL — FINAL LIST + SHARE
+══════════════════════════════════════ -->
+<div class="screen" id="sFinal">
+  <div class="sun-banner">
+    <div class="sun-ico">🛒</div>
+    <div class="sun-txt">All done! Your shopping list is ready. Copy or share it wherever you need it.</div>
+  </div>
+  <div class="card">
+    <div class="card-t">Final Shopping List</div>
+    <div class="card-s" id="finalSubtitle"></div>
+    <div class="final-box" id="finalBox"></div>
+    <div class="share-row no-print">
+      <button class="btn btn-p" style="flex:1;" onclick="copyList()">📋 Copy</button>
+      <button class="btn btn-sun" style="flex:1;" onclick="shareList()" id="shareBtn">⬆ Share</button>
+      <button class="btn btn-sec btn-sm" onclick="downloadList()">↓ .txt</button>
+    </div>
+  </div>
+  <div class="card no-print">
+    <div class="card-t">Week Plan</div>
+    <div id="finalPlan"></div>
+  </div>
+  <div class="bbar no-print" id="bbar-sFinal" style="display:none;">
+    <div class="bbar-i">
+      <button class="btn btn-sec" style="flex:1;" onclick="goScreen('sLand')">← Home</button>
+      <button class="btn btn-p" style="flex:1;" onclick="window.print()">🖨 Print</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S-QUICK — QUICK RECIPE
+══════════════════════════════════════ -->
+<div class="screen" id="sQuick">
+  <div class="card">
+    <div class="card-t">Quick Recipe Ideas</div>
+    <div class="card-s">Get 2–3 meal options for tonight</div>
+    <label>What are you in the mood for?</label>
+    <textarea id="qkMood" placeholder="e.g. something hearty and comforting, grilled meat, light pasta..."></textarea>
+    <label>What's in the fridge?</label>
+    <textarea id="qkFridge" placeholder="e.g. chicken breasts, broccoli, cream, mushrooms..."></textarea>
+    <label>Who's eating tonight?</label>
+    <div class="dtg" style="margin-top:5px;margin-bottom:4px;">
+      <button class="db sel" id="qkAll" onclick="setQkWho('all')">Whole family</button>
+      <button class="db" id="qkAdults" onclick="setQkWho('adults')">Adults only</button>
+      <button class="db" id="qkFew" onclick="setQkWho('few')">Just 1–2 people</button>
+    </div>
+    <label>How long do you have?</label>
+    <div class="dtg" style="margin-top:5px;">
+      <button class="db" id="qkt20" onclick="setQkTime('20')">20 min</button>
+      <button class="db sel" id="qkt40" onclick="setQkTime('40')">40 min</button>
+      <button class="db" id="qkt60" onclick="setQkTime('60')">60 min</button>
+      <button class="db" id="qkt90" onclick="setQkTime('90+')">90 min+</button>
+    </div>
+  </div>
+  <div id="qkResults"></div>
+  <div class="bbar no-print" id="bbar-sQuick" style="display:none;">
+    <div class="bbar-i">
+      <button class="btn btn-sec" style="flex:0 0 auto;padding:15px 14px;" onclick="goScreen('sLand')">← Back</button>
+      <button class="btn btn-p" style="flex:1;" onclick="getQuick()">Get Ideas →</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+const S = {
+  keyA:'', keyO:'',
+  stdWeek:true, friday:'takeout', daughter:false,
+  dadAbsent:[], lowTime:[],
+  qFavs:'', q3:'', q4:'', q5:'',
+  voiceTrans:'', manTrans:'',
+  draft:null,
+  cardSt:{},        // { day: {status,why[],idea} }
+  shopSel:{},       // { 'Cat::item': bool }
+  pendingReplace:{}, // { day: mealObject } — staged replacement waiting for accept
+  qkWho:'all', qkTime:'40',
+  memory:[]         // [{weekOf, meals:[{day,meal}], notes}]  — rolling 6 weeks
+};
+
+const DAYS_PLAN = ['Mon','Tue','Wed','Thu','Sat','Sun'];
+const WHY = ['Too heavy','Wrong protein','Bad timing','Boys won\'t eat it','Too complex','Not in the mood','Too expensive','Cooked this recently'];
+
+const STAPLES = new Set([
+  'salt','pepper','black pepper','white pepper','olive oil','oil','butter','flour','sugar',
+  'baking powder','baking soda','garlic powder','onion powder','paprika','cumin','coriander',
+  'oregano','thyme','rosemary','bay leaves','bay leaf','stock cubes','chicken stock cubes',
+  'beef stock cubes','vegetable stock cubes','soy sauce','worcestershire sauce','vinegar',
+  'white vinegar','cornstarch','cornflour','vanilla extract','cooking spray','water'
+]);
+
+function isStaple(item) {
+  const low = item.toLowerCase().replace(/[^a-z\s]/g,'').trim();
+  for (const s of STAPLES) { if (low.includes(s)) return true; }
+  return false;
+}
+
+// ══════════════════════════════════════
+// SYSTEM PROMPT
+// ══════════════════════════════════════
+const SYS = `You are a meal planning assistant for a family in Chilliwack, BC, Canada.
+
+HOUSEHOLD: Mom (48), Dad (49), Will (21), Son (14), Son (9). Daughter (23) visits occasionally. Core = 5 people. With daughter = 6.
+
+SCHEDULE: Plan Mon-Sun (7 nights) normally. Friday is DEFAULT takeout - intake confirms if meal needed. Sunday = always LIGHTER (soup, light pasta, salad, simple fish). No pellet smoker Sundays. Dad travels 1 week in 6 - no pellet smoker when absent.
+
+MOM'S RESTRICTIONS (primary constraint):
+- No peppers of any kind (bell, chilli, jalapeno, capsicum)
+- Nothing spicy - no hot sauce, chilli flakes, spicy seasoning
+- No raw cabbage (roasted/fermented may be tried cautiously)
+- No beans - hard no, heavy on stomach
+- Minimal bread
+- Avoid oily/greasy food
+- Health: lower carbs, more veg, more protein (meat-based), minimal processed food
+- Heavy cream/bechamel pasta - use sparingly, not weekly
+
+HARD NOs WHOLE HOUSEHOLD: tofu, deep-fried food, asparagus, bell peppers, chilli any form, hot curry, raw cabbage, eggplant/aubergine, Brussels sprouts, pre-packaged stir fry mixes (contain peppers), heavily processed meals.
+OCCASIONAL DAD-AND-BOYS ONLY: chilli, bean dishes - Mom eats something else on these nights.
+
+CUISINES: Canadian/North American, South African (boerewors, oxtail, braai), Italian, Asian mild only, Mediterranean, BBQ/grilling. Flavour = herbs, garlic, citrus, umami - NO chilli heat.
+
+FAVOURITES - FULL ROTATION (use ALL of these over time, not just the obvious ones):
+lasagne, veggie lasagne (zucchini/butternut/carrot in tomato sauce), smoked BBQ ribs (pellet smoker), steak on the grill, mac and cheese, boerewors, bangers and mash with gravy, seafood paella, seafood yaki soba, homemade pizza, oxtail stew and oxtail soup, Will's beef and mushroom pie, Will's pork chops, beef stroganoff, beef stew, shepherd's pie, roast chicken with potatoes, chicken mushroom pie, Marry Me Chicken (creamy Crock-Pot chicken), Mediterranean creamy chicken pasta, bolognese with white bechamel sauce (use sparingly - heavy), meatballs with rice and veg, teriyaki chicken, risotto, leek and potato soup, build-your-own chicken rice bowls, wraps (chicken and veg), burritos (leftover rice + meat + sauce), sausage rolls with roasted butternut/sweet potato, homemade beef or chicken burgers (weekend), Mitchell's Soup Co bag soup, orzo dishes, nachos.
+
+VEGETABLES:
+Loved: sweet potato, butternut, roasted veg, caramelised onions, green beans, broccoli, broccolini, sugar snap peas, carrots (raw or roasted), zucchini noodles/spirals, Caesar salad, stir fry veg from scratch (no peppers).
+Tolerated: steamed zucchini, mushrooms (use in sauces/pies, not dominant).
+Hard NO: eggplant, Brussels sprouts, raw cabbage, pre-packaged stir fry mixes.
+To explore: plantain, roasted parmesan cabbage (cautious intro), new vegetables not yet tried.
+Note: stir fry must be assembled from scratch. Zucchini spirals accepted as pasta substitute.
+
+QUICK MEALS (low-time nights): toasted sarmies, quick pasta, one-pan pizza, fish and salad, pie and salad, wraps, burritos, nachos, sausage rolls + salad, Mitchell's soup, Crock-Pot meal started earlier in day.
+
+PLANNING RULES:
+1. Never repeat protein two nights in a row
+2. At least 2 lower-carb nights (protein + veg, no starchy base)
+3. EVERY meal must include a substantial specific vegetable component - describe it explicitly
+4. At least 1 grill/smoker meal when Dad is home (not Sunday)
+5. Balance heavy and light nights - never stack rich meals back to back
+6. One comfort/favourite from the list per week minimum
+7. Cooking methods: grill, roast, saute, braise, bake, air fry, steam - no deep frying
+8. Sunday = light meal always
+9. One meal per week flagged plus_one: true (optional wildcard - adventurous or different)
+10. Note leftover potential
+11. Draw from the FULL favourites list - not just the obvious 6-8 meals. Rotate broadly.
+
+EQUIPMENT: Electric range, pellet smoker (outdoor - 45-60 min preheat, not low-time days or Sundays), Instant Pot, Crock-Pot, air fryer x2, electric steamer, KitchenAid stand mixer, Ninja contact grill, food processor, blenders. No rice cooker - stovetop. Pre-crushed garlic.
+
+BUDGET: $200-250 CAD/week for 5 people. Target $30-40 per meal. Flag high_cost:true if over ~$50. Budget-friendly proteins (chicken thighs, mince, sausages, pork) for most nights. Max 1 premium protein per week.
+
+COOKING TIME: Flexible up to 90 min unless day flagged low-time (30-40 min max).
+
+VARIETY RULES - CRITICAL - READ CAREFULLY:
+- Do NOT default to your safe/obvious choices. Roast chicken, lasagne, boerewors, and steak are NOT the answer every week.
+- Check meal history - avoid any meal served in the last 2 weeks entirely.
+- Each week must span at least 3 different cuisine styles.
+- Actively rotate through the FULL favourites list. Lesser-used meals like shepherd's pie, risotto, teriyaki chicken, yaki soba, orzo, meatballs, burritos, pork chops MUST appear regularly.
+- Think of each week as a completely fresh menu, not last week reshuffled.
+- Surprise the family with the plus_one - draw from the explore list or something genuinely new within the rules.
+- If you find yourself writing roast chicken or lasagne, stop and pick something else unless history shows it has been 3+ weeks.
+
+Respond ONLY with raw valid JSON - no preamble, no markdown fences, no explanation.`;
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+window.onload = () => {
+  S.keyA = localStorage.getItem('mp_ka') || '';
+  S.keyO = localStorage.getItem('mp_ko') || '';
+  S.memory = JSON.parse(localStorage.getItem('mp_meal_history') || '[]');
+  updateKeyUi();
+  if (S.keyA) goScreen('sLand'); else goScreen('s0');
+};
+
+function updateKeyUi() {
+  const hasA = !!S.keyA, hasO = !!S.keyO;
+  document.getElementById('dotK').classList.toggle('on', hasA);
+  document.getElementById('lblK').textContent = hasA ? (hasO ? 'Keys ✓' : 'Key ✓') : 'Setup';
+}
+
+function saveKeys() {
+  const a = document.getElementById('keyA').value.trim();
+  const o = document.getElementById('keyO').value.trim();
+  // If fields are empty but we already have saved keys, just continue
+  if (!a && S.keyA) { updateKeyUi(); goScreen('sLand'); return; }
+  if (!a) { alert('Anthropic API key is required.'); return; }
+  if (!a.startsWith('sk-')) { alert('That does not look like a valid API key — should start with sk-'); return; }
+  S.keyA = a; S.keyO = o;
+  localStorage.setItem('mp_ka', a);
+  if (o) localStorage.setItem('mp_ko', o);
+  updateKeyUi();
+  goScreen('sLand');
+}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+const STEP_MAP = { s1:1, s2:2, sSumm:3, sShop:4, sFinal:5 };
+
+const BBAR_MAP = {
+  's0':'bbar-s0', 's1':'bbar-s1', 's2':'bbar-s2',
+  'sSumm':'bbar-sSumm', 'sShop':'bbar-sShop',
+  'sFinal':'bbar-sFinal', 'sQuick':'bbar-sQuick'
+};
+
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+  const isWeekly = id in STEP_MAP;
+  document.getElementById('sNav').style.display = isWeekly ? 'flex' : 'none';
+  if (isWeekly) updatePills(STEP_MAP[id]);
+  // Show only this screen's bbar
+  Object.values(BBAR_MAP).forEach(bid => {
+    const b = document.getElementById(bid);
+    if (b) b.style.display = 'none';
+  });
+  const activeBbar = BBAR_MAP[id];
+  if (activeBbar) {
+    const b = document.getElementById(activeBbar);
+    if (b) b.style.display = 'block';
+  }
+}
+
+function navTo(id) { goScreen(id); }
+
+function updatePills(active) {
+  [1,2,3,4,5].forEach(i => {
+    const p = document.getElementById('p'+i);
+    if (!p) return;
+    p.classList.remove('active','done');
+    if (i === active) p.classList.add('active');
+    else if (i < active) p.classList.add('done');
+  });
+}
+
+function startWeekly() {
+  if (S.draft) { document.getElementById('newSessModal').classList.add('on'); }
+  else { goScreen('s1'); }
+}
+function closeModal() { document.getElementById('newSessModal').classList.remove('on'); }
+function confirmNewSess() {
+  S.draft = null; S.cardSt = {}; S.shopSel = {};
+  closeModal(); goScreen('s1');
+}
+
+// ══════════════════════════════════════
+// SESSION TOGGLES
+// ══════════════════════════════════════
+function setBtn(id, active) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (active) { el.classList.add('sel'); }
+  else { el.classList.remove('sel'); }
+}
+
+function setStd(yes) {
+  S.stdWeek = yes;
+  setBtn('wnY', yes); setBtn('wnN', !yes);
+  document.getElementById('custRangeBox').style.display = yes ? 'none' : 'block';
+}
+
+function setFri(v) {
+  S.friday = v;
+  setBtn('friBtnTo', v === 'takeout');
+  setBtn('friBtnPl', v === 'plan');
+  // Show/hide Friday buttons in day toggles
+  const showFri = v === 'plan';
+  const df = document.getElementById('dadFri');
+  const lf = document.getElementById('ltFri');
+  if (df) df.style.display = showFri ? '' : 'none';
+  if (lf) lf.style.display = showFri ? '' : 'none';
+  const sub = document.getElementById('hdrSub');
+  sub.textContent = showFri ? 'Mon–Sun · Full week planned' : 'Mon–Thu · Sat–Sun · Friday = takeout 🎉';
+}
+
+function setDau(v) {
+  S.daughter = v;
+  setBtn('dNo', !v); setBtn('dYes', v);
+}
+
+function tDay(btn, type) {
+  const d = btn.dataset.d;
+  if (type === 'absent') {
+    btn.classList.toggle('absent');
+    if (btn.classList.contains('absent')) { if (!S.dadAbsent.includes(d)) S.dadAbsent.push(d); }
+    else S.dadAbsent = S.dadAbsent.filter(x=>x!==d);
+  } else {
+    btn.classList.toggle('low');
+    if (btn.classList.contains('low')) { if (!S.lowTime.includes(d)) S.lowTime.push(d); }
+    else S.lowTime = S.lowTime.filter(x=>x!==d);
+  }
+}
+
+// ══════════════════════════════════════
+// VOICE RECORDING
+// ══════════════════════════════════════
+let mediaRec = null, audioChunks = [], isRec = false;
+
+async function toggleRec() {
+  if (isRec) { stopRec(); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const mime = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+    mediaRec = new MediaRecorder(stream, {mimeType: mime});
+    audioChunks = [];
+    mediaRec.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+    mediaRec.onstop = processAudio;
+    mediaRec.start(250);
+    isRec = true;
+    setRecUi('rec');
+  } catch(e) {
+    alert('Microphone access is needed. Please allow it in your browser settings.');
+  }
+}
+
+function stopRec() {
+  if (mediaRec && isRec) {
+    mediaRec.stop();
+    mediaRec.stream.getTracks().forEach(t => t.stop());
+    isRec = false;
+    setRecUi('proc');
+  }
+}
+
+function setRecUi(state) {
+  const btn = document.getElementById('recBtn');
+  const lbl = document.getElementById('recLbl');
+  const st = document.getElementById('recSt');
+  btn.className = 'rec-btn ' + (state === 'rec' ? 'rec' : state === 'proc' ? 'proc' : 'idle');
+  if (state === 'idle') { lbl.textContent = 'Record'; st.textContent = 'Tap to start'; }
+  else if (state === 'rec') { lbl.textContent = 'Stop'; st.textContent = 'Recording... tap to stop'; }
+  else { lbl.textContent = '...'; st.textContent = 'Transcribing with Whisper...'; }
+}
+
+async function processAudio() {
+  const mime = audioChunks[0]?.type || 'audio/webm';
+  const blob = new Blob(audioChunks, {type: mime});
+  const ext = mime.includes('mp4') ? 'mp4' : 'webm';
+  const out = document.getElementById('transOut');
+  out.classList.remove('empty');
+
+  if (!S.keyO) {
+    out.textContent = '⚠️ No OpenAI key set — paste your transcript manually in the box below.';
+    out.classList.add('empty');
+    setRecUi('idle');
+    return;
+  }
+
+  out.textContent = '⏳ Transcribing... please wait.';
+
+  try {
+    const fd = new FormData();
+    fd.append('file', blob, 'recording.' + ext);
+    fd.append('model', 'whisper-1');
+    fd.append('language', 'en');
+    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + S.keyO },
+      body: fd
+    });
+    if (!res.ok) throw new Error('Whisper error ' + res.status);
+    const data = await res.json();
+    S.voiceTrans = data.text;
+    out.textContent = data.text;
+    document.getElementById('recSt').textContent = '✓ Transcribed successfully';
+    setRecUi('idle');
+  } catch(e) {
+    out.textContent = '❌ Transcription failed: ' + e.message + '. Paste your transcript manually below.';
+    out.classList.add('empty');
+    setRecUi('idle');
+  }
+}
+
+// ══════════════════════════════════════
+// QUICK RECIPE
+// ══════════════════════════════════════
+function setQkWho(v) {
+  S.qkWho = v;
+  ['all','adults','few'].forEach(x => setBtn('qk'+x.charAt(0).toUpperCase()+x.slice(1), x===v));
+}
+function setQkTime(v) {
+  S.qkTime = v;
+  ['20','40','60','90+'].forEach(x => setBtn('qkt'+x, x===v));
+}
+
+async function getQuick() {
+  if (!S.keyA) { alert('Set your API key first.'); return; }
+  const mood = document.getElementById('qkMood').value.trim();
+  const fridge = document.getElementById('qkFridge').value.trim();
+  const whoNote = S.qkWho==='all' ? 'Whole family — Mom\'s restrictions apply' :
+                  S.qkWho==='adults' ? 'Adults only — Mom\'s restrictions still apply' :
+                  'Just 1–2 people, smaller portions';
+
+  showLoad('Finding ideas...', 'Checking what works with your ingredients');
+  try {
+    const msg = `Give me 2-3 quick dinner ideas for tonight.
+Mood/craving: ${mood || 'open to suggestions'}
+In the fridge: ${fridge || 'use pantry staples'}
+Who: ${whoNote}
+Time: ${S.qkTime} minutes
+
+Return JSON: {"options":[{"name":"","description":"","why_it_works":"","key_steps":[""],"time_min":30,"effort":"quick","vegetable_component":""}]}`;
+
+    const r = await callClaude(msg);
+    renderQuick(r.options || []);
+  } catch(e) { alert('Error: ' + e.message); }
+  finally { hideLoad(); }
+}
+
+function renderQuick(opts) {
+  const el = document.getElementById('qkResults');
+  el.innerHTML = opts.length ? opts.map(o => `
+    <div class="recipe-card">
+      <div class="recipe-name">${o.name}</div>
+      <div class="recipe-desc">${o.description}</div>
+      <div class="recipe-desc" style="color:var(--grn);font-size:0.79rem;margin-bottom:7px;">🥦 ${o.vegetable_component}</div>
+      <div style="font-size:0.79rem;color:var(--text-m);margin-bottom:7px;"><strong>Steps:</strong> ${(o.key_steps||[]).join(' → ')}</div>
+      <div class="recipe-meta">⏱ ${o.time_min} min · ${o.effort} · ${o.why_it_works}</div>
+    </div>`).join('') : '<div class="alert a-sun">No results returned — try adjusting your inputs.</div>';
+}
+
+// ══════════════════════════════════════
+// CLAUDE API
+// ══════════════════════════════════════
+function showLoad(t, s) {
+  document.getElementById('loadT').textContent = t || 'Working...';
+  document.getElementById('loadS').textContent = s || '';
+  document.getElementById('loadOv').classList.add('on');
+}
+function hideLoad() { document.getElementById('loadOv').classList.remove('on'); }
+
+async function callClaude(msg) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': S.keyA,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4000,
+      temperature: 0.9,
+      system: SYS,
+      messages: [{ role: 'user', content: msg }]
+    })
+  });
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error?.message || 'API error ' + res.status);
+  }
+  const d = await res.json();
+  const txt = d.content.filter(b => b.type === 'text').map(b => b.text).join('');
+  return JSON.parse(txt.replace(/```json|```/g, '').trim());
+}
+
+// ══════════════════════════════════════
+// GENERATE DRAFT  (+ budget check pass)
+// ══════════════════════════════════════
+async function generateDraft(regen = false) {
+  if (!S.keyA) { alert('Set your API key first.'); goScreen('s0'); return; }
+
+  S.qFavs = document.getElementById('qFavs').value.trim();
+  S.q3 = document.getElementById('q3').value.trim();
+  S.q4 = document.getElementById('q4').value.trim();
+  S.q5 = document.getElementById('q5').value.trim();
+  const trans = S.voiceTrans || document.getElementById('manTrans').value.trim();
+
+  const friNote = S.friday === 'plan'
+    ? 'Friday: PLAN A MEAL — include Friday in the plan this week.'
+    : 'Friday: takeout — do NOT include Friday in the plan.';
+
+  const daysNote = S.friday === 'plan'
+    ? 'Plan 7 meals: Mon, Tue, Wed, Thu, Fri, Sat, Sun'
+    : 'Plan 6 meals: Mon, Tue, Wed, Thu, Sat, Sun (skip Friday)';
+
+  const dadNote = S.dadAbsent.length
+    ? `Dad AWAY on: ${S.dadAbsent.join(', ')} — no pellet smoker those days, Will or Mom leads`
+    : 'Dad home all week';
+
+  const ltNote = S.lowTime.length
+    ? `LOW TIME days (max 30-40 min): ${S.lowTime.join(', ')}`
+    : 'No low-time days — all days flexible';
+
+  const memNote = buildMemoryNote();
+
+  const msg = `${daysNote}.
+${friNote}
+${dadNote}
+${ltNote}
+${S.daughter ? 'Daughter visiting — plan for 6 people' : 'No daughter — 5 people'}
+Family favourites requested this week: ${S.qFavs || 'none specified'}
+What family wants: ${S.q3 || 'no preference'}
+Hard NOs / events: ${S.q4 || 'none beyond usual'}
+Fridge items to use: ${S.q5 || 'nothing specific'}
+${trans ? '\nFAMILY DISCUSSION:\n' + trans : ''}
+${memNote}
+
+VARIETY IS MANDATORY: Do NOT suggest the same meals as previous weeks. Check the history above and avoid anything served in the last 2 weeks. Actively choose from the less-common items in the favourites list. Each week must feel like a completely fresh menu.
+
+IMPORTANT: Budget is $200-250 CAD for 5 people across all meals. Target $30-40 per meal. Flag high_cost:true for anything likely over $50. Actively choose budget-friendly proteins (chicken thighs, mince, sausages, pork shoulder) for most nights. Reserve premium proteins for 1 special meal max.
+
+Return ONLY this JSON structure (no markdown):
+{
+  "week_summary": "2-3 sentences",
+  "budget_note": "Brief note on estimated week cost and any concerns",
+  "meals": [
+    {
+      "day": "Mon",
+      "meal_name": "",
+      "description": "",
+      "key_ingredients": [],
+      "assigned_cook": "",
+      "effort_level": "quick|moderate|involved",
+      "cooking_method": "",
+      "vegetable_component": "",
+      "leftover_potential": "",
+      "plus_one": false,
+      "high_cost": false,
+      "low_carb": false,
+      "sunday_light": false,
+      "estimated_cost_cad": 35
+    }
+  ],
+  "shopping_list": {
+    "Meat & Fish": [],
+    "Produce": [],
+    "Dairy & Eggs": [],
+    "Dry & Pantry": [],
+    "Sauces & Condiments": [],
+    "Other": []
+  }
+}`;
+
+  showLoad('Building your week...', 'Step 1 of 2 — generating meal plan');
+
+  try {
+    let plan = await callClaude(msg);
+
+    // ── BUDGET CHECK PASS (Option B) ──
+    const totalEst = (plan.meals || []).reduce((s, m) => s + (m.estimated_cost_cad || 35), 0);
+    if (totalEst > 260) {
+      showLoad('Checking budget...', 'Step 2 of 2 — adjusting for $200-250 CAD target');
+      const budgetMsg = `This meal plan has an estimated total cost of $${totalEst} CAD which exceeds the $200-250 budget.
+
+Current plan:
+${(plan.meals||[]).map(m => `${m.day}: ${m.meal_name} (~$${m.estimated_cost_cad})`).join('\n')}
+
+Please revise the plan to bring the total under $250 CAD by:
+1. Swapping expensive proteins for budget-friendly alternatives where possible
+2. Keeping at least one favourite/comfort meal
+3. Maintaining all household restrictions and rules
+
+Return the same JSON format with revised meals and updated estimated_cost_cad values.`;
+      plan = await callClaude(budgetMsg);
+    }
+
+    S.draft = plan;
+    S.cardSt = {};
+    renderDraft(plan);
+    showBudgetBar(plan);
+    goScreen('s2');
+  } catch(e) {
+    alert('Error generating plan: ' + e.message);
+  } finally {
+    hideLoad();
+  }
+}
+
+// ══════════════════════════════════════
+// RENDER DRAFT
+// ══════════════════════════════════════
+function effortCls(e) {
+  return e === 'quick' ? 'b-grn' : e === 'involved' ? 'b-red' : 'b-sun';
+}
+
+function showBudgetBar(plan) {
+  const bar = document.getElementById('budgetBar');
+  const total = (plan.meals||[]).reduce((s,m) => s + (m.estimated_cost_cad||35), 0);
+  let cls = total <= 250 ? 'ok' : total <= 275 ? 'warn' : 'over';
+  let ico = total <= 250 ? '✅' : '⚠️';
+  let msg = total <= 250
+    ? `Estimated week: ~$${total} CAD — within budget.`
+    : `Estimated week: ~$${total} CAD — slightly over the $250 target. Consider swapping a high-cost meal.`;
+  if (plan.budget_note) msg += ' ' + plan.budget_note;
+  bar.className = 'budget-bar ' + cls;
+  bar.style.display = 'flex';
+  bar.innerHTML = `<div class="budget-ico">${ico}</div><div class="budget-txt">${msg}</div>`;
+}
+
+function renderDraft(plan) {
+  const c = document.getElementById('mealCards');
+  c.innerHTML = '';
+
+  if (plan.week_summary) {
+    c.innerHTML = `<div class="sum-box">${plan.week_summary}</div>`;
+  }
+
+  (plan.meals || []).forEach(meal => {
+    if (!S.cardSt[meal.day]) {
+      S.cardSt[meal.day] = { status:'', why:[], idea:'' };
+    }
+    const st = S.cardSt[meal.day];
+
+    const badges = [];
+    if (meal.plus_one) badges.push('<span class="badge b-star">★ Try This</span>');
+    if (meal.sunday_light) badges.push('<span class="badge b-lite">☀ Light</span>');
+    if (meal.low_carb) badges.push('<span class="badge b-grn">Low Carb</span>');
+    if (meal.high_cost) badges.push('<span class="badge b-red">Higher Cost</span>');
+    badges.push(`<span class="badge ${effortCls(meal.effort_level)}">${meal.effort_level}</span>`);
+    if (meal.estimated_cost_cad) badges.push(`<span class="badge b-pur">~$${meal.estimated_cost_cad}</span>`);
+
+    const div = document.createElement('div');
+    div.className = 'mc' + (st.status ? ' ' + st.status : '');
+    div.id = 'mc-' + meal.day;
+
+    div.innerHTML = `
+      <div class="mc-hdr">
+        <div class="mc-day">${meal.day}</div>
+        <div class="mc-name">${meal.meal_name}</div>
+        <div class="badges">${badges.join('')}</div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-desc">${meal.description}</div>
+        <div class="mc-meta">
+          <span>👨‍🍳 ${meal.assigned_cook}</span>
+          <span>🍳 ${meal.cooking_method}</span>
+        </div>
+        <div class="mc-meta"><span>🥦 ${meal.vegetable_component}</span></div>
+        ${meal.leftover_potential && meal.leftover_potential !== 'no'
+          ? `<div class="mc-meta"><span>♻️ ${meal.leftover_potential}</span></div>` : ''}
+        <div class="mc-ingr"><strong>Key ingredients:</strong> ${(meal.key_ingredients||[]).join(', ')}</div>
+
+        <div class="mc-acts">
+          <button class="ab approve${st.status==='approved'?' active':''}"
+            onclick="setCardSt('${meal.day}','approved',this)">✓ Yes — this works</button>
+          <button class="ab reject${st.status==='rejected'?' active':''}"
+            onclick="setCardSt('${meal.day}','rejected',this)">✕ No — replace it</button>
+        </div>
+
+        <div class="why-row${st.status==='rejected'?' show':''}" id="why-${meal.day}">
+          <div class="why-chips">
+            ${WHY.map(w => `<button class="why-btn${st.why.includes(w)?' sel':''}"
+              onclick="toggleWhy('${meal.day}','${w}',this)">${w}</button>`).join('')}
+          </div>
+          <input class="why-idea" type="text" placeholder="Any meal in mind? (optional)"
+            value="${st.idea||''}" oninput="S.cardSt['${meal.day}'].idea=this.value"/>
+          <button class="replace-btn" id="rbtn-${meal.day}"
+            onclick="replaceMeal('${meal.day}')">
+            ↺ Find me a replacement
+          </button>
+        </div>
+
+        <div id="newsug-${meal.day}" style="display:none;"></div>
+      </div>`;
+
+    c.appendChild(div);
+  });
+
+  // Draft shopping list (without staple filtering)
+  renderShopDraft(plan.shopping_list);
+}
+
+function setCardSt(day, status, clickedBtn) {
+  const prev = S.cardSt[day].status;
+  const newSt = prev === status ? '' : status;
+  S.cardSt[day].status = newSt;
+
+  const card = document.getElementById('mc-' + day);
+  card.className = 'mc' + (newSt ? ' ' + newSt : '');
+
+  // Update both buttons
+  card.querySelectorAll('.ab').forEach(b => b.classList.remove('active'));
+  if (newSt) card.querySelectorAll('.ab.' + newSt).forEach(b => b.classList.add('active'));
+
+  // Show/hide why row
+  const whyRow = document.getElementById('why-' + day);
+  if (whyRow) whyRow.classList.toggle('show', newSt === 'rejected');
+
+  // If switching back to approved, hide any new suggestion
+  if (newSt === 'approved') {
+    const ns = document.getElementById('newsug-' + day);
+    if (ns) ns.style.display = 'none';
+  }
+}
+
+function toggleWhy(day, reason, btn) {
+  btn.classList.toggle('sel');
+  const arr = S.cardSt[day].why;
+  const i = arr.indexOf(reason);
+  if (i >= 0) arr.splice(i, 1); else arr.push(reason);
+}
+
+async function replaceMeal(day) {
+  const st = S.cardSt[day] || {};
+  const currentMeal = (S.draft.meals || []).find(m => m.day === day);
+  if (!currentMeal) return;
+  if (!S.pendingReplace) S.pendingReplace = {};  // safety init
+
+  const btn = document.getElementById('rbtn-' + day);
+  btn.disabled = true;
+  btn.textContent = '⏳ Finding a replacement...';
+
+  // Build context of what else is on the plan this week
+  const otherMeals = (S.draft.meals || [])
+    .filter(m => m.day !== day)
+    .map(m => `${m.day}: ${m.meal_name} (protein: ${(m.key_ingredients||[]).slice(0,2).join(', ')})`);
+
+  const whyStr = st.why.length ? st.why.join(', ') : 'no specific reason given';
+  const ideaStr = st.idea ? `Family suggestion: "${st.idea}"` : 'No specific meal in mind.';
+  const ltNote = S.lowTime.includes(day) ? `${day} is a LOW TIME day — max 30-40 min.` : `${day} has flexible prep time.`;
+  const dadNote = S.dadAbsent.includes(day) ? `Dad is away on ${day} — no pellet smoker.` : '';
+  const memNote = buildMemoryNote();
+
+  const msg = `Replace the meal for ${day} only.
+
+REJECTED MEAL: ${currentMeal.meal_name}
+REASON FOR REJECTION: ${whyStr}
+${ideaStr}
+
+REST OF THIS WEEK'S PLAN (do not repeat these proteins):
+${otherMeals.join('\n')}
+
+${ltNote}
+${dadNote}
+${S.daughter ? 'Planning for 6 (daughter visiting).' : 'Planning for 5.'}
+${memNote}
+
+Suggest ONE replacement meal for ${day} only. Apply all household rules (no peppers, no spice, no cabbage, substantial veg, budget-conscious).
+${st.idea ? `Try to honour the family suggestion if it meets all rules.` : ''}
+
+Return ONLY this JSON (no markdown):
+{
+  "day": "${day}",
+  "meal_name": "",
+  "description": "",
+  "key_ingredients": [],
+  "assigned_cook": "",
+  "effort_level": "quick|moderate|involved",
+  "cooking_method": "",
+  "vegetable_component": "",
+  "leftover_potential": "",
+  "plus_one": false,
+  "high_cost": false,
+  "low_carb": false,
+  "sunday_light": false,
+  "estimated_cost_cad": 35
+}`;
+
+  try {
+    const result = await callClaude(msg);
+
+    // Stage the replacement
+    S.pendingReplace[day] = result;
+
+    // Show new suggestion in card
+    const nsEl = document.getElementById('newsug-' + day);
+    nsEl.style.display = '';
+    nsEl.innerHTML = `
+      <div class="new-suggestion">
+        <div class="new-sug-label">↺ New suggestion for ${day}</div>
+        <div class="new-sug-name">${result.meal_name}</div>
+        <div class="new-sug-desc">${result.description}</div>
+        <div style="font-size:0.75rem;color:var(--text-q);margin-top:5px;">
+          🥦 ${result.vegetable_component} &nbsp;·&nbsp; 👨‍🍳 ${result.assigned_cook} &nbsp;·&nbsp; ⏱ ${result.effort_level}
+          ${result.estimated_cost_cad ? ' &nbsp;·&nbsp; ~$'+result.estimated_cost_cad : ''}
+        </div>
+        <div style="display:flex;gap:7px;margin-top:10px;">
+          <button class="ab approve active" style="flex:1;" onclick="acceptReplacement('${day}')">✓ Yes — use this</button>
+          <button class="ab reject" style="flex:1;" onclick="rejectReplacement('${day}')">✕ No — try again</button>
+        </div>
+      </div>`;
+
+    btn.disabled = false;
+    btn.textContent = '↺ Try a different replacement';
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '↺ Find me a replacement';
+    alert('Error finding replacement: ' + e.message);
+  }
+}
+
+function acceptReplacement(day) {
+  const meal = S.pendingReplace[day];
+  if (!meal) return;
+  // Replace in draft
+  const idx = (S.draft.meals || []).findIndex(m => m.day === day);
+  if (idx >= 0) S.draft.meals[idx] = meal;
+  // Mark as approved
+  S.cardSt[day] = { status:'approved', why:[], idea:'' };
+  // Re-render just this card
+  renderDraft(S.draft);
+  // Scroll to card
+  const card = document.getElementById('mc-' + day);
+  if (card) card.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function rejectReplacement(day) {
+  // Hide suggestion, let them try again
+  const ns = document.getElementById('newsug-' + day);
+  if (ns) ns.style.display = 'none';
+  const btn = document.getElementById('rbtn-' + day);
+  if (btn) { btn.disabled = false; btn.textContent = '↺ Find me a different replacement'; }
+}
+
+function renderShopDraft(list) {
+  const c = document.getElementById('shopDraft');
+  c.innerHTML = '';
+  Object.entries(list || {}).forEach(([cat, items]) => {
+    if (!items?.length) return;
+    const div = document.createElement('div');
+    div.className = 'sh-cat';
+    div.innerHTML = `<h3>${cat}</h3>` +
+      items.map(item => `<div class="sh-item" style="cursor:default;"><span>${item}</span></div>`).join('');
+    c.appendChild(div);
+  });
+}
+
+function showTab(t) {
+  document.getElementById('tMealsC').style.display = t==='meals' ? '' : 'none';
+  document.getElementById('tShopDC').style.display = t==='shopd' ? '' : 'none';
+  document.getElementById('tMeals').classList.toggle('active', t==='meals');
+  document.getElementById('tShopD').classList.toggle('active', t==='shopd');
+}
+
+// ══════════════════════════════════════
+// WEEK SUMMARY
+// ══════════════════════════════════════
+function goToSumm() {
+  if (!S.draft) return;
+  // Check all meals have a decision
+  const undecided = (S.draft.meals || []).filter(m => {
+    const st = S.cardSt[m.day] || {};
+    return st.status !== 'approved';
+  });
+  if (undecided.length) {
+    const days = undecided.map(m => m.day).join(', ');
+    alert(`Please confirm all meals before continuing.\n\nStill need a decision on: ${days}\n\nTap ✓ Yes or ✕ No on each meal card.`);
+    return;
+  }
+  renderSummary();
+  goScreen('sSumm');
+}
+
+function renderSummary() {
+  const c = document.getElementById('summRows');
+  c.innerHTML = '';
+
+  (S.draft.meals || []).forEach(meal => {
+    const st = S.cardSt[meal.day] || {};
+    const statusIcon = st.status === 'approved' ? '✓' : st.status === 'rejected' ? '✕' : st.status === 'maybe' ? '?' : '·';
+    const statusColor = st.status === 'approved' ? 'var(--grn)' : st.status === 'rejected' ? 'var(--red)' : st.status === 'maybe' ? 'var(--sun-d)' : 'var(--text-q)';
+
+    const badges = [];
+    if (meal.plus_one) badges.push('<span class="badge b-star" style="font-size:0.62rem;">★</span>');
+    if (meal.sunday_light) badges.push('<span class="badge b-lite" style="font-size:0.62rem;">Light</span>');
+    if (meal.high_cost) badges.push('<span class="badge b-red" style="font-size:0.62rem;">$$</span>');
+    if (meal.estimated_cost_cad) badges.push(`<span class="badge b-pur" style="font-size:0.62rem;">~$${meal.estimated_cost_cad}</span>`);
+
+    const row = document.createElement('div');
+    row.className = 'ws-row';
+    row.innerHTML = `
+      <div class="ws-day">${meal.day}</div>
+      <div class="ws-info">
+        <div class="ws-name">${meal.meal_name}</div>
+        <div class="ws-meta">${meal.assigned_cook} · ${meal.effort_level} · ${meal.cooking_method}</div>
+        ${badges.length ? `<div class="ws-badges">${badges.join('')}</div>` : ''}
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-size:1rem;color:${statusColor};font-weight:700;">${statusIcon}</span>
+        <button class="ws-change" onclick="navTo('s2')">Change</button>
+      </div>`;
+    c.appendChild(row);
+  });
+}
+
+// ══════════════════════════════════════
+// SHOPPING SELECTION
+// ══════════════════════════════════════
+function goToShop() {
+  if (!S.draft) return;
+  renderShopSel();
+  goScreen('sShop');
+
+  // Save this week to rolling meal history
+  saveWeekToHistory();
+}
+
+function renderShopSel() {
+  const c = document.getElementById('shopSel');
+  c.innerHTML = '';
+  S.shopSel = {};
+
+  const list = S.draft.shopping_list || {};
+  Object.entries(list).forEach(([cat, items]) => {
+    // Filter out staples
+    const filtered = (items || []).filter(item => !isStaple(item));
+    if (!filtered.length) return;
+
+    const div = document.createElement('div');
+    div.className = 'sh-cat';
+    div.innerHTML = `<h3>${cat}</h3>`;
+
+    filtered.forEach(item => {
+      const key = cat + '::' + item;
+      S.shopSel[key] = true; // default all selected
+
+      const row = document.createElement('div');
+      row.className = 'sh-item checked';
+      row.innerHTML = `<input type="checkbox" checked/><span>${item}</span>`;
+      row.querySelector('input').addEventListener('change', function() {
+        S.shopSel[key] = this.checked;
+        row.classList.toggle('checked', this.checked);
+      });
+      div.appendChild(row);
+    });
+    c.appendChild(div);
+  });
+}
+
+function selectAll(v) {
+  S.shopSel = {};
+  document.getElementById('shopSel').querySelectorAll('.sh-item').forEach(row => {
+    const cb = row.querySelector('input');
+    const key = row.dataset.key;
+    if (cb) { cb.checked = v; row.classList.toggle('checked', v); }
+  });
+  // Re-check from DOM
+  document.getElementById('shopSel').querySelectorAll('.sh-item input').forEach(cb => {
+    const span = cb.nextElementSibling;
+    const key = [...document.getElementById('shopSel').querySelectorAll('.sh-cat h3')].find(h => h.parentElement.contains(cb))?.textContent + '::' + (span?.textContent || '');
+    S.shopSel[key] = v;
+    cb.checked = v;
+    cb.closest('.sh-item').classList.toggle('checked', v);
+  });
+  // Simpler: just toggle all checkboxes
+  document.querySelectorAll('#shopSel input[type=checkbox]').forEach(cb => {
+    cb.checked = v;
+    cb.closest('.sh-item').classList.toggle('checked', v);
+  });
+  // Rebuild shopSel from DOM state
+  rebuildShopSel();
+}
+
+function rebuildShopSel() {
+  S.shopSel = {};
+  document.querySelectorAll('#shopSel .sh-cat').forEach(cat => {
+    const catName = cat.querySelector('h3').textContent;
+    cat.querySelectorAll('.sh-item').forEach(row => {
+      const cb = row.querySelector('input');
+      const item = row.querySelector('span').textContent;
+      S.shopSel[catName + '::' + item] = cb.checked;
+    });
+  });
+}
+
+// ══════════════════════════════════════
+// FINAL LIST
+// ══════════════════════════════════════
+function buildFinal() {
+  rebuildShopSel();
+
+  // Group selected items by category
+  const grouped = {};
+  Object.entries(S.shopSel).forEach(([key, selected]) => {
+    if (!selected) return;
+    const [cat, item] = key.split('::');
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(item);
+  });
+
+  // Build text
+  const lines = [];
+  const plan = S.draft;
+  const weekOf = new Date().toLocaleDateString('en-CA', {month:'long', day:'numeric', year:'numeric'});
+  lines.push(`🛒 SHOPPING LIST — Week of ${weekOf}`);
+  lines.push('');
+
+  Object.entries(grouped).forEach(([cat, items]) => {
+    if (!items.length) return;
+    lines.push(`${cat.toUpperCase()}`);
+    items.forEach(i => lines.push(`  ☐ ${i}`));
+    lines.push('');
+  });
+
+  lines.push('---');
+  lines.push('MEAL PLAN');
+  (plan?.meals || []).forEach(m => {
+    lines.push(`${m.day}: ${m.meal_name}`);
+  });
+
+  const text = lines.join('\n');
+  document.getElementById('finalBox').textContent = text;
+
+  const total = (plan?.meals||[]).reduce((s,m)=>s+(m.estimated_cost_cad||35),0);
+  document.getElementById('finalSubtitle').textContent =
+    `${Object.values(grouped).flat().length} items · Estimated week: ~$${total} CAD`;
+
+  // Build week plan section
+  const fp = document.getElementById('finalPlan');
+  fp.innerHTML = (plan?.meals||[]).map(m => `
+    <div class="ws-row">
+      <div class="ws-day">${m.day}</div>
+      <div class="ws-info">
+        <div class="ws-name">${m.meal_name}</div>
+        <div class="ws-meta">${m.assigned_cook} · ${m.cooking_method} · 🥦 ${m.vegetable_component}</div>
+      </div>
+    </div>`).join('');
+
+  // Show/hide share button based on API support
+  document.getElementById('shareBtn').style.display = navigator.share ? '' : 'none';
+
+  goScreen('sFinal');
+}
+
+function copyList() {
+  const txt = document.getElementById('finalBox').textContent;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = event.target;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy', 2000);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    event.target.textContent = '✓ Copied!';
+    setTimeout(() => event.target.textContent = '📋 Copy', 2000);
+  });
+}
+
+function shareList() {
+  const txt = document.getElementById('finalBox').textContent;
+  if (navigator.share) {
+    navigator.share({ title: 'Shopping List', text: txt })
+      .catch(e => { if (e.name !== 'AbortError') alert('Share failed: ' + e.message); });
+  }
+}
+
+function downloadList() {
+  const txt = document.getElementById('finalBox').textContent;
+  const blob = new Blob([txt], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'shopping_list_' + new Date().toISOString().slice(0,10) + '.txt';
+  a.click();
+}
+
+// ══════════════════════════════════════
+// MEAL HISTORY  (rolling 6-week log)
+// ══════════════════════════════════════
+function saveWeekToHistory() {
+  const meals = (S.draft.meals || []).map(m => {
+    const st = S.cardSt[m.day] || {};
+    return {
+      day: m.day,
+      meal: m.meal_name,
+      status: st.status || 'served',
+      why_rejected: st.why || [],
+      comment: st.comment || ''
+    };
+  });
+
+  const weekOf = new Date().toISOString().slice(0,10);
+  const entry = { weekOf, meals };
+
+  // Load existing, add new, keep last 6 weeks
+  const history = JSON.parse(localStorage.getItem('mp_meal_history') || '[]');
+  history.push(entry);
+  const trimmed = history.slice(-6);
+  localStorage.setItem('mp_meal_history', JSON.stringify(trimmed));
+  S.memory = trimmed;
+}
+
+function buildMemoryNote() {
+  const history = JSON.parse(localStorage.getItem('mp_meal_history') || '[]');
+  if (!history.length) return '';
+
+  const lines = ['\nMEAL HISTORY (what this family has eaten recently — use this to avoid repeats and honour preferences):'];
+
+  history.slice(-4).reverse().forEach(week => {
+    const date = new Date(week.weekOf);
+    const label = date.toLocaleDateString('en-CA', {month:'short', day:'numeric'});
+    lines.push(`\nWeek of ${label}:`);
+    (week.meals || []).forEach(m => {
+      let note = `  - ${m.day}: ${m.meal}`;
+      if (m.status === 'rejected') {
+        note += ` [REJECTED${m.why_rejected.length ? ' — ' + m.why_rejected.join(', ') : ''}${m.comment ? ': ' + m.comment : ''}]`;
+      }
+      lines.push(note);
+    });
+  });
+
+  lines.push('\nUse this history to: avoid meals served in the last 2 weeks, note what was rejected and why, and rotate variety.');
+  return lines.join('\n');
+}
+
+function viewHistory() {
+  const history = JSON.parse(localStorage.getItem('mp_meal_history') || '[]');
+  if (!history.length) { alert('No meal history yet — history builds up after your first completed week.'); return; }
+
+  let txt = 'MEAL HISTORY\n' + '='.repeat(40) + '\n';
+  history.slice().reverse().forEach(week => {
+    const date = new Date(week.weekOf);
+    txt += '\nWeek of ' + date.toLocaleDateString('en-CA', {month:'long', day:'numeric', year:'numeric'}) + '\n';
+    (week.meals || []).forEach(m => {
+      const flag = m.status === 'rejected' ? ' ✕' : m.status === 'approved' ? ' ✓' : '';
+      txt += `  ${m.day}: ${m.meal}${flag}`;
+      if (m.why_rejected?.length) txt += ` (${m.why_rejected.join(', ')})`;
+      if (m.comment) txt += ` — ${m.comment}`;
+      txt += '\n';
+    });
+  });
+
+  // Show in a simple overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'historyOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:14px;padding:20px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.2);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <span style="font-family:Lora,serif;font-size:1rem;font-weight:600;color:var(--pur);">Meal History</span>
+        <button onclick="document.getElementById('historyOverlay').remove()" style="border:none;background:var(--cream-d);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:DM Sans,sans-serif;font-size:0.8rem;">Close</button>
+      </div>
+      <pre style="font-size:0.78rem;color:var(--text-m);line-height:1.7;white-space:pre-wrap;font-family:DM Sans,sans-serif;">${txt}</pre>
+      <button onclick="clearHistory()" style="margin-top:14px;border:1.5px solid var(--red);background:var(--red-l);color:var(--red);border-radius:8px;padding:8px 14px;cursor:pointer;font-family:DM Sans,sans-serif;font-size:0.78rem;font-weight:600;">Clear All History</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function clearHistory() {
+  if (!confirm('Clear all meal history? This cannot be undone.')) return;
+  localStorage.removeItem('mp_meal_history');
+  S.memory = [];
+  const ov = document.getElementById('historyOverlay');
+  if (ov) ov.remove();
+  alert('History cleared.');
+}
+
+// ══════════════════════════════════════
+// DEFAULTS ON LOAD
+// ══════════════════════════════════════
+// Run after DOM ready
+setTimeout(() => {
+  setStd(true);
+  setFri('takeout');
+  setDau(false);
+  setQkWho('all');
+  setQkTime('40');
+}, 50);
+</script>
+</body>
+</html>
